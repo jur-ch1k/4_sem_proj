@@ -5,7 +5,6 @@
 using namespace std;
 
 class map;
-//class player; tba
 class room;
 class entity;
 class hero;

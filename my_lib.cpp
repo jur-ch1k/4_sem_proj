@@ -1,4 +1,5 @@
 #include "my_lib.h"
+
 //classes and func-s
 
 map::map(int size) {
