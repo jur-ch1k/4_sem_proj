@@ -107,6 +107,12 @@ int main() {
     // char *empty_room[] = {"     ", "     ", "     "};
     // char *loked_room[] = {"     ", "  ?  ", "     "};
     // char *chest_room1[] = {"  _  ", " |_| ", "     "};
+
+
+
+
+
+    
     // char *chest_room2[] = {"   \\ ", " |_| ", "     "};
     // char *chest_room3[] = {"    _", " |_| ", "     "};
     // char *chest_room4[] = {"     ", " |_|\\", "     "};
