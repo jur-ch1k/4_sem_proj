@@ -6,7 +6,7 @@ using namespace std;
 
 class map;
 class entity;
-class hero;
+class hero_class;
 class room;
 
 class map {
@@ -16,10 +16,11 @@ class map {
 public:
     map(int size = 1);
     //room operator []
-    void move(int side); //0 - up; 1 - right; 2 - down; 3 - left
+    bool move(hero_class& hero, int side); //0 - up; 1 - right; 2 - down; 3 - left
     ~map();
     void print();
     void test_func();
+
     friend std::ostream& operator <<(std::ostream& out, map& ob);
 };
 
@@ -33,6 +34,7 @@ protected:
 public:
     void print();
     room();
+
     friend std::ostream& operator <<(std::ostream& out, map& ob);
     friend class map;
 };
@@ -46,15 +48,17 @@ public:
     virtual void print() = 0;
 };
 
-class hero: public entity {// test
+
+class hero_class: public entity {// test
     int hp;
     int pos;
     int stamina;
     int harizma;
     bool loot[5];
 public:
-    hero(const char * str);
+    hero_class(const char * str);
     void print();
+    bool window_lose();
     friend class map;
 };
 

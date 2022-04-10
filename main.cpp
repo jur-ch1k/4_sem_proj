@@ -49,17 +49,100 @@ int main() {
     //    arr[i]->print();
     //}
 
-    
-    int size;
-    for (int i = 1; i <= 10; i++) {
+    //cout << "Hello!!\nWhat's your name hero?\nType it here and press ENTER: ";
+    string name;
+    cin >> name;
+    hero_class player(name.c_str());
 
-        //cin >> size;
-        map test_map(i);
-        cout << test_map << endl;
-        //test_map.test_func();
+    //cout << "\nHow cool are you from 5 to 15?\nType it here and press ENTER: ";
+    int size;
+    cin >> size;
+    //while (size < 5 || size > 15) {
+    //    cout << "FROM 5 TO 15!!!\nType it here and press ENTER: ";
+    //    cin >> size;
+    //}
+    //cout << "\nHi, " << name << "!!!\nWhait a bit please.\n";
+
+    //this_thread::sleep_for(std::chrono::milliseconds(1000));
+    //for (int i = 0; i < 6; i++) {
+    //    cout << "Loading...\n";
+    //    this_thread::sleep_for(std::chrono::milliseconds(500));
+    //}
+    
+    map main_map(size);
+    //main_map.test_func();
+    int side;
+    char wasd;
+    main_map.test_func();//ЭТО ТЕСТОВО
+    while (1) {
+        system("clear");
+        cout << main_map << "Use WASD to move)\n";
+        cin >> wasd;
+        switch (wasd) {
+        case 'w':
+            side = 0;
+            break;
+        case 'a':
+            side = 3;
+            break;
+        case 's':
+            side = 2;
+            break;
+        case 'd':
+            side = 1;
+            break;
+        }
+
+        if (!main_map.move(player, side)) {
+            if (player.window_lose()) {
+                system("clear");
+                cout << main_map;
+                cout << "Oh, no! You've just fallen out of the window(\nYou died(((\n";
+                break;
+            }
+
+        }
     }
 
-    //test_map.test_func();
+    ////попробовать зациклить через трай блок и потом в кэтчах обрабатывать события
+    //int size;
+    //map test_map(5);
+    //hero_class player("test");
+    ///*player.print();
+    //for (int i = 0; i < 4; i++) {
+    //    if (test_map.move(player, i)) {
+    //        cout << i << " :ok ";
+    //    }
+    //    else {
+    //        cout << i << " :Nok ";
+    //    }
+    //}
+    //cout << '\n';*/
+    //
+    //    int side;
+    //do {
+    //    char wasd;
+    //    cout << test_map;
+    //    player.print();
+    //    cin >> wasd;
+    //    switch (wasd) {
+    //    case 'w':
+    //        side = 0;
+    //        break;
+    //    case 'a':
+    //        side = 3;
+    //        break;
+    //    case 's':
+    //        side = 2;
+    //        break;
+    //    case 'd':
+    //        side = 1;
+    //        break;
+    //    }
+    //    //test_map.test_func();
+    //} while (test_map.move(player, side));
+
+    ////test_map.test_func();
 
     //test_map.print();
     //
