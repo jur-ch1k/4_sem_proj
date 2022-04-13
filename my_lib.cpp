@@ -1,5 +1,6 @@
 #include "my_lib.h"
-#include <cmath>
+#include <thread>
+//#include <cmath>
 
 //classes and func-s
 
@@ -68,7 +69,7 @@ map::~map() {
     delete [] room_arr;
 }
 
-bool map::move(hero_class &hero, int side) {
+int map::move(hero_class &hero, int side) {
     if (hero.pos >= 0 && hero.pos < size && side == 0 ||
         hero.pos >= size*size - size && hero.pos < size*size && side == 2 ||
         hero.pos % size == 0 && side == 3 ||
@@ -78,7 +79,7 @@ bool map::move(hero_class &hero, int side) {
         room_arr[hero.pos].inside[1] = "     ";
         room_arr[hero.pos].inside[2] = "     ";
         hero.pos = -1;
-        return false;//window
+        throw "w_loss";
     }
 
     room_arr[hero.pos].door[side] = true;
@@ -102,20 +103,108 @@ bool map::move(hero_class &hero, int side) {
     room_arr[new_pos].mod[4] = false;
 
     if (room_arr[new_pos].mod[0]) {
-        room_arr[hero.pos].inside[0] = "     ";
-        room_arr[hero.pos].inside[1] = "     ";
-        room_arr[hero.pos].inside[2] = "     ";
+        room_arr[hero.pos] >> room_arr[new_pos];
         hero.pos = new_pos;
-        room_arr[hero.pos].inside[0] = "  0  ";
-        room_arr[hero.pos].inside[1] = " T|T ";
-        room_arr[hero.pos].inside[2] = " / \\ ";
-        return true;
+        return 0;
     }
     else {
         cout << "WOW! What's there?" << endl;
-        return false;
+        return new_pos;
     }
 } //0 - up; 1 - right; 2 - down; 3 - left
+
+void map::event_handler(hero_class& hero, int room_num) {
+    if (room_arr[room_num].mod[2]) {
+        srand(time(NULL));
+        system("clear");
+        cout << *this << hero << "Do you want to open it? (y/n)\n";
+        char ans;
+        cin >> ans;
+        if (ans == 'n')
+            return;
+        if (ans != 'y')
+            throw "input_error";
+        int loot_type = rand()%4;
+        if (loot_type == 3 && hero.loot[3] == 3)
+            loot_type = rand()%3;
+        chest_animation(room_num, loot_type, hero);
+        room_arr[room_num].mod[2] = false;
+        room_arr[room_num].mod[0] = true;
+        string item_name;
+        switch (loot_type)
+        {
+        case 0:
+            item_name = "a sword";
+            break;
+        case 1:
+            item_name = "a shield";
+            break;
+        case 2:
+            item_name = "an armor";
+            break;
+        case 3:
+            item_name = "a healing";
+            break;
+        }
+        cout << "You have just found "
+             << item_name <<"!!!\nPress any key to take it\n";
+        cin >> ans;
+
+        room_arr[hero.pos] >> room_arr[room_num];
+
+        hero.pos = room_num;
+        hero.loot[loot_type]++;
+    }
+}
+
+void map::chest_animation(int room_num, int loot_type, hero_class& hero) {
+    string frame[5][3];
+    frame[0][0] = "   \\ ";
+    frame[0][1] = " |_| ";
+    frame[0][2] = "     ";
+    
+    frame[1][0] = "    _";
+    frame[1][1] = " |_| ";
+    frame[1][2] = "     ";
+    
+    frame[2][0] = "     ";
+    frame[2][1] = " |_|\\";
+    frame[2][2] = "     ";
+
+    frame[3][0] = frame[3][1] = frame[3][2] = "     ";
+    switch (loot_type)
+    {
+    case 0:
+        frame[4][0] = "  |  ";
+        frame[4][1] = " _|_ ";
+        frame[4][2] = "  T  ";
+        break;
+    case 1:
+        frame[4][0] = " ___ ";
+        frame[4][1] = "| X |";
+        frame[4][2] = " \\_/ ";
+        break;
+    case 2:
+        frame[4][0] = "_ _ _";
+        frame[4][1] = "I|_|I";
+        frame[4][2] = "// \\\\";
+        break;
+    case 3:
+        frame[4][0] = " ___ ";
+        frame[4][1] = "T + T";
+        frame[4][2] = "|___|";
+        break;
+    }
+
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 3; j++) {
+            room_arr[room_num].inside[j] = frame[i][j];
+        }
+        system("clear");
+        cout << *this << hero;
+        this_thread::sleep_for(chrono::milliseconds(500));
+    }
+}
 
 void map::print() {
     for (int i = 0; i < size*size; i++) {
@@ -157,11 +246,6 @@ std::ostream& operator <<(std::ostream& out, map& ob) {
                 if (ob.room_arr[i * ob.size + k].mod[4])//ПЕРЕДЕЛАТЬ СОДЕРЖИМОЕ КОМНАТ!!!!!!!!!!!
                     out << closed_room[j];
                 else 
-                //if (ob.room_arr[i * ob.size + k].mod[2])
-                //    out << chest_room[j];
-                //else if (ob.room_arr[i * ob.size + k].mod[3])
-                //    out << monster_room[j];
-                //else
                     out << ob.room_arr[i*ob.size+k].inside[j]; //добавить лев и прав двери + окна
 
                 if (j == 1) {//прав. стена
@@ -209,28 +293,34 @@ void room::print() {
         << inside[0] << endl << inside[1] << endl << inside[2] << endl << "#####" << endl;
 }
 
+void room::operator >>(room& to_room) {
+    to_room.inside[0] = this->inside[0];
+    to_room.inside[1] = this->inside[1];
+    to_room.inside[2] = this->inside[2];
+
+    this->inside[0] = this->inside[1] = this->inside[2] = "     ";
+}
+
 entity::entity(const char * str): name(str), strength(0){}
 
 hero_class::hero_class(const char * str): entity(str) {
     hp = 100;
     pos = 0;
-    stamina = 1;
+    stamina = 10;
     harizma = 0;
-    for (int i = 0; i < 5; i++) {
-        loot[i] = false;
+    for (int i = 0; i < 4; i++) {
+        loot[i] = 0;
     }
+}
+
+std::ostream& operator <<(std::ostream& out, hero_class& ob) {
+    out << "NAME: " <<ob.name
+        << "\nLOOT:\nx" << ob.loot[0] << "   |   x" << ob.loot[1] << "  ___  x" << ob.loot[2] << " _ _ _  x" << ob.loot[3]
+        << "  ___ \n    _|_     | X |    I|_|I     T + T\n     T       \\_/     // \\\\     |___|\nHP: "
+        << ob.hp <<"\nSTAMINA: " << ob.stamina << endl;
+    return out;
 }
 
 void hero_class::print() {
     cout << "hp: " << hp << " pos: " << pos << endl;
-}
-
-bool hero_class::window_lose() {
-   /* if (pos == -1) {
-        cout << "Oh, no! You've just fallen out of the window(\nYou died(((\n";
-        return true;
-    }
-    else
-        return false;*/
-    return pos == -1 ? true : false;
 }

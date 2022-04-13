@@ -13,13 +13,15 @@ class map {
     room* room_arr;
     int size; // map = size * size
     //int player_pos;
+    void chest_animation(int room_num, int loot_type, hero_class& hero);
 public:
     map(int size = 1);
     //room operator []
-    bool move(hero_class& hero, int side); //0 - up; 1 - right; 2 - down; 3 - left
+    int move(hero_class& hero, int side); //0 - up; 1 - right; 2 - down; 3 - left
     ~map();
     void print();
     void test_func();
+    void event_handler(hero_class& hero, int new_room);
 
     friend std::ostream& operator <<(std::ostream& out, map& ob);
 };
@@ -34,6 +36,7 @@ protected:
 public:
     void print();
     room();
+    void operator >>(room& new_room);
 
     friend std::ostream& operator <<(std::ostream& out, map& ob);
     friend class map;
@@ -54,12 +57,14 @@ class hero_class: public entity {// test
     int pos;
     int stamina;
     int harizma;
-    bool loot[5];
+    int loot[4];//0 - sword; 1 - shield; 2 - armor; 3 - heal
 public:
     hero_class(const char * str);
     void print();
-    bool window_lose();
+
+    friend std::ostream& operator <<(std::ostream& out, hero_class& ob);
     friend class map;
 };
+
 
 #endif

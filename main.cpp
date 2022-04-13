@@ -1,5 +1,4 @@
 #include <iostream>
-#include <thread>
 #include "my_lib.h"
 
 using namespace std;
@@ -63,20 +62,14 @@ int main() {
     //}
     //cout << "\nHi, " << name << "!!!\nWhait a bit please.\n";
 
-    //this_thread::sleep_for(std::chrono::milliseconds(1000));
-    //for (int i = 0; i < 6; i++) {
-    //    cout << "Loading...\n";
-    //    this_thread::sleep_for(std::chrono::milliseconds(500));
-    //}
-    
     map main_map(size);
     //main_map.test_func();
     int side;
     char wasd;
-    main_map.test_func();//ЭТО ТЕСТОВО
+    //main_map.test_func();//ЭТО ТЕСТОВО
+    system("clear");
     while (1) {
-        system("clear");
-        cout << main_map << "Use WASD to move)\n";
+        cout << main_map << player;
         cin >> wasd;
         switch (wasd) {
         case 'w':
@@ -92,16 +85,24 @@ int main() {
             side = 1;
             break;
         }
-
-        if (!main_map.move(player, side)) {
-            if (player.window_lose()) {
-                system("clear");
-                cout << main_map;
-                cout << "Oh, no! You've just fallen out of the window(\nYou died(((\n";
-                break;
+        try {
+            int new_room = main_map.move(player, side);
+            if (new_room) {
+                main_map.event_handler(player, new_room);
             }
-
         }
+        catch (const char * str) {
+            string msg(str);
+            if (msg == "w_loss") {
+                system("clear");
+                cout << main_map << player << "Oh, no!You've just fallen out of the window(\nYou died(((\n";
+            }
+            if (msg == "input_error") {
+                cout << "TERMINATED DUE TO WRONG INPUT\n";
+            }
+            break;
+        }
+        system("clear");
     }
 
     ////попробовать зациклить через трай блок и потом в кэтчах обрабатывать события
