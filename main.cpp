@@ -3,7 +3,8 @@
 
 using namespace std;
 
-int room::stat_num = 0;
+int entity::numer;
+
 int main() {
 //drawing test   this_thread::sleep_for(std::chrono::milliseconds(50));
     //int size;
@@ -69,23 +70,25 @@ int main() {
     //main_map.test_func();//щрн реярнбн
     system("clear");
     while (1) {
-        cout << main_map << player;
-        cin >> wasd;
-        switch (wasd) {
-        case 'w':
-            side = 0;
-            break;
-        case 'a':
-            side = 3;
-            break;
-        case 's':
-            side = 2;
-            break;
-        case 'd':
-            side = 1;
-            break;
-        }
         try {
+            cout << main_map << player;
+            cin >> wasd;
+            switch (wasd) {
+            case 'w':
+                side = 0;
+                break;
+            case 'a':
+                side = 3;
+                break;
+            case 's':
+                side = 2;
+                break;
+            case 'd':
+                side = 1;
+                break;
+            default:
+                throw "input_error";
+            }
             int new_room = main_map.move(player, side);
             if (new_room) {
                 main_map.event_handler(player, new_room);
@@ -99,6 +102,10 @@ int main() {
             }
             if (msg == "input_error") {
                 cout << "TERMINATED DUE TO WRONG INPUT\n";
+            }
+            if (msg == "hp_loss") {
+                system("clear");
+                cout << main_map << player << "Oh, no!You've just ran out of HP(\nYou died(((\n";
             }
             break;
         }

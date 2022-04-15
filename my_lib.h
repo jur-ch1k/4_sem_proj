@@ -27,8 +27,6 @@ public:
 };
 
 class room {
-protected:
-    static int stat_num;
     int room_num;
     bool mod[5]; //0 - empty; 1 - window; 2 - chest; 3 - monster; 4 - closed
     bool door[4]; //0 - up; 1 - right; 2 - down; 3 - left //1 - open 0 - close
@@ -44,13 +42,13 @@ public:
 
 class entity {
 protected:
+    static int numer;
     string name;
     int strength;
 public:
     entity(const char * str);
     virtual void print() = 0;
 };
-
 
 class hero_class: public entity {// test
     int hp;
@@ -66,5 +64,14 @@ public:
     friend class map;
 };
 
+class monster_class : public entity {
+    static int num;
+    int type;
+    //int num;
+public:
+    monster_class();
+    friend void map::event_handler(hero_class& hero, int room_num);
+    void print();
+};
 
 #endif
