@@ -2,12 +2,14 @@
 #define __my_lib__h__
 
 #include <iostream>
+
 using namespace std;
 
 class map;
 class entity;
 class hero_class;
 class room;
+class monster_class;
 
 class map {
     room* room_arr;
@@ -22,6 +24,7 @@ public:
     void print();
     void test_func();
     void event_handler(hero_class& hero, int new_room);
+    bool win();
 
     friend std::ostream& operator <<(std::ostream& out, map& ob);
 };
@@ -53,10 +56,11 @@ public:
 class hero_class: public entity {// test
     int hp;
     int pos;
-    int stamina;
+    int score;
     int harizma;
     int loot[4];//0 - sword; 1 - shield; 2 - armor; 3 - heal
 public:
+    bool heal();
     hero_class(const char * str);
     void print();
 
@@ -66,7 +70,7 @@ public:
 
 class monster_class : public entity {
     static int num;
-    int type;
+    int type;// 0 - vampire; 1 - goblin; 2 - werwolf; 3 - yaga
     //int num;
 public:
     monster_class();
