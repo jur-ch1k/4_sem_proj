@@ -15,10 +15,10 @@ int main() {
     cout << "\nHow cool are you from 5 to 15?\nType it here and press ENTER: ";
     int size;
     cin >> size;
-    /*while (size < 5 || size > 15) {
+    while (size < 5 || size > 15) {
         cout << "FROM 5 TO 15!!!\nType it here and press ENTER: ";
         cin >> size;
-    }*/
+    }
     cout << "\nHi, " << name << "!!!\nWhait a bit please.\n";
 
     map main_map(size);
